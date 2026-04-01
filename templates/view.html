@@ -1,0 +1,23 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<form method="GET" class="mb-3">
+    <input type="text" name="search" placeholder="Search medicine..." 
+           value="{{search}}" class="form-control">
+</form>
+<table class="table">
+<tr><th>ID</th><th>Name</th><th>Company</th><th>Qty</th><th>Action</th></tr>
+{% for i in data %}
+<tr>
+<td>{{i[0]}}</td>
+<td>{{i[1]}}</td>
+<td>{{i[2]}}</td>
+<td>{{i[4]}}</td>
+<td>
+    <a href="/edit/{{i[0]}}" class="btn btn-primary btn-sm">Edit</a>
+    <a href="/delete/{{i[0]}}" class="btn btn-danger btn-sm">Delete</a>
+</td>
+</tr>
+{% endfor %}
+</table>
+{% endblock %}

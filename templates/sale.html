@@ -1,0 +1,54 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="glass-card">
+    <h4>💰 Sell Medicines</h4>
+
+    <form method="POST">
+
+        <div id="items">
+            <div class="row mb-2">
+                <div class="col">
+                    <select name="name" class="form-control">
+                        {% for m in meds %}
+                            <option value="{{m[0]}}">{{m[0]}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col">
+                    <input type="number" name="qty" placeholder="Qty" class="form-control">
+                </div>
+            </div>
+        </div>
+
+        <button type="button" onclick="addItem()" class="btn btn-secondary mb-2">+ Add More</button>
+        <br>
+        <button class="btn btn-success">Generate Bill & Invoice</button>
+
+    </form>
+</div>
+
+<script>
+function addItem(){
+    let div = document.createElement("div");
+    div.classList.add("row","mb-2");
+
+    div.innerHTML = `
+        <div class="col">
+            <select name="name" class="form-control">
+                {% for m in meds %}
+                <option value="{{m[0]}}">{{m[0]}}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col">
+            <input type="number" name="qty" placeholder="Qty" class="form-control">
+        </div>
+    `;
+
+    document.getElementById("items").appendChild(div);
+}
+</script>
+
+{% endblock %}

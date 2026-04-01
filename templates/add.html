@@ -1,0 +1,66 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<div class="glass-card">
+
+    <h4 class="mb-4">
+        <i class="bi bi-capsule-pill"></i> Add New Medicine
+    </h4>
+
+    <form method="POST">
+
+        <div class="row">
+            
+            <!-- Name -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Medicine Name</label>
+                <input name="name" class="form-control" placeholder="Enter medicine name" required>
+            </div>
+
+            <!-- Company -->
+            <div class="col-md-6 mb-3">
+                <label class="form-label">Company</label>
+                <input name="company" class="form-control" placeholder="Enter company name" required>
+            </div>
+
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Batch No</label>
+                <input name="batch" placeholder="Batch No" class="form-control mb-2">
+            </div>
+
+            <!-- Price -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Price (₹)</label>
+                <input name="price" type="number" class="form-control" placeholder="Enter price" required>
+            </div>
+
+            <!-- Quantity -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Quantity</label>
+                <input name="quantity" type="number" class="form-control" placeholder="Enter quantity" required>
+            </div>
+
+            <!-- Expiry -->
+            <div class="col-md-4 mb-3">
+                <label class="form-label">Expiry Date</label>
+                <input name="expiry" type="date" class="form-control" required>
+            </div>
+
+        </div>
+
+        <!-- Buttons -->
+        <div class="d-flex justify-content-between mt-3">
+            <button class="btn btn-success btn-custom">
+                <i class="bi bi-plus-circle"></i> Add Medicine
+            </button>
+
+            <a href="/view" class="btn btn-secondary btn-custom">
+                <i class="bi bi-arrow-left"></i> Back
+            </a>
+        </div>
+
+    </form>
+
+</div>
+
+{% endblock %}

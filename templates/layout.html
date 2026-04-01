@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pharma Advanced</title>
+
+<!-- Bootstrap -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Icons -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+body {
+    background: #0f172a;
+    color: white;
+}
+
+.glass-card {
+    background: rgba(255,255,255,0.05);
+    padding: 20px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+}
+body {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+    color: #fff;
+}
+
+/* Glass Navbar */
+.navbar-custom {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 10px 20px;
+}
+
+/* Card Style */
+.glass-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(12px);
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+}
+
+/* Buttons */
+.btn-custom {
+    border-radius: 12px;
+    transition: 0.3s;
+}
+
+.btn-custom:hover {
+    transform: scale(1.05);
+}
+
+/* Title */
+.title {
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+</style>
+
+</head>
+
+<body class="container mt-4">
+
+<!-- 🔥 NAVBAR -->
+<div class="navbar-custom d-flex justify-content-between align-items-center mb-4">
+
+    <h4 class="title">
+        <i class="bi bi-capsule"></i> Pharma Dashboard
+    </h4>
+<nav class="mb-3">
+    <a href="/dashboard" class="btn btn-primary">Dashboard</a>
+    <a href="/add" class="btn btn-success">Add</a>
+    <a href="/view" class="btn btn-info">View</a>
+
+    <!-- NEW -->
+    <a href="/sale" class="btn btn-warning">Sell</a>
+    <a href="/sales-report" class="btn btn-dark">Sales</a>
+
+    <a href="/logout" class="btn btn-danger">Logout</a>
+</nav>
+</div>
+
+<!-- 🔥 MAIN CONTENT -->
+<div class="glass-card">
+    {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

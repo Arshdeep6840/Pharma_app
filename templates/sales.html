@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+
+<div class="glass-card mb-4">
+    <h4>Total Revenue: ₹{{ total_revenue }}</h4>
+</div>
+
+<div class="glass-card mb-4">
+    <canvas id="revenueChart"></canvas>
+</div>
+
+<div class="glass-card">
+    <table class="table text-white">
+        <tr>
+            <th>ID</th><th>Medicine</th><th>Qty</th><th>Total</th><th>Date</th><th>Invoice</th>
+        </tr>
+
+        {% for i in data %}
+        <tr>
+            <td>{{i[0]}}</td>
+            <td>{{i[1]}}</td>
+            <td>{{i[2]}}</td>
+            <td>₹{{i[3]}}</td>
+            <td>{{i[4]}}</td>
+            <td>
+    <a href="/invoice/{{i[0]}}" class="btn btn-sm btn-warning">Invoice</a>
+</td>
+
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+new Chart(document.getElementById("revenueChart"), {
+    type: "line",
+    data: {
+        labels: {{ dates|safe }},
+        datasets: [{
+            label: "Revenue",
+            data: {{ revenue|safe }},
+            tension: 0.4
+        }]
+    }
+});
+</script>
+
+{% endblock %}

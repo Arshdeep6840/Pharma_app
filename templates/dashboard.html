@@ -1,0 +1,211 @@
+{% extends 'layout.html' %}
+{% block content %}
+
+<!-- KPI CARDS -->
+<div class="row">
+    <div class="col-md-3 mb-2">
+        <div class="glass-card text-center">
+            <h6>AI Demand Prediction</h6>
+            <h2>{{ prediction }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-2">
+        <div class="glass-card text-center">
+            <h6>Total Medicines</h6>
+            <h2>{{ total or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-2">
+        <div class="glass-card text-center">
+            <h6>Low Stock</h6>
+            <h2>{{ low_stock or 0 }}</h2>
+        </div>
+    </div>
+
+    <div class="col-md-3 mb-2">
+        <div class="glass-card text-center">
+            <h6>Expiring</h6>
+            <h2>{{ expiring or 0  }}</h2>
+        </div>
+    </div>
+
+</div>
+
+<!-- CHARTS -->
+<div class="row mt-4">
+
+    <div class="col-md-7 mb-4">
+        <div class="glass-card">
+            <h5>📊 Stock Quantity</h5>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-4 mb-4">
+        <div class="glass-card">
+            <h5>🥧 Stock Distribution</h5>
+            <canvas id="pieChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="glass-card">
+            <h5>📈 Stock Trend</h5>
+            <canvas id="lineChart"></canvas>
+        </div>
+    </div>
+
+    <div class="col-md-6 mb-4">
+        <div class="glass-card">
+            <h5>📉 Low Stock Items</h5>
+            <canvas id="lowStockChart"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- 📅 EXPIRY CHART -->
+<div class="glass-card mt-4">
+    <h5>📅 Days Left Before Expiry</h5>
+    <canvas id="expiryChart"></canvas>
+</div>
+
+<!-- 🚨 EXPIRY ALERTS -->
+<div class="row mt-4">
+    <div class="glass-card mt-4">
+    <h5>🔥 Top Selling Medicines</h5>
+    <canvas id="topChart"></canvas>
+</div>
+<div class="row mt-4">
+<script>
+new Chart(document.getElementById("topChart"), {
+    type: "bar",
+    data: {
+        labels: {{ top_names|safe }},
+        datasets: [{
+            label: "Sales",
+            data: {{ top_qty|safe }}
+        }]
+    }
+});
+</script>
+</div>
+
+    <div class="col-md-6">
+        <div class="glass-card">
+            <h5 class="text-warning">⚠️ Expiring Soon (30 days)</h5>
+
+            {% if expiring_soon %}
+                <ul>
+                    {% for i in expiring_soon %}
+                        <li>
+                            {{ i[0] }} - 
+                            <span class="text-warning">{{ i[1] }} days left</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No medicines expiring soon</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="glass-card">
+            <h5 class="text-danger">❌ Expired Medicines</h5>
+
+            {% if expired %}
+                <ul>
+                    {% for i in expired %}
+                        <li>
+                            {{ i[0] }} - 
+                            <span class="text-danger">Expired {{ -i[1] }} days ago</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No expired medicines 🎉</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+
+<!-- ✅ SINGLE SCRIPT BLOCK -->
+<script>
+
+// Flask Data
+let names = {{ names|safe }};
+let qty = {{ qty|safe }};
+let exp_labels = {{ exp_labels|safe }};
+let exp_days = {{ exp_days|safe }};
+
+// LOW STOCK FILTER
+let lowNames = [];
+let lowQty = [];
+
+qty.forEach((q, i) => {
+    if (q < 10) {
+        lowNames.push(names[i]);
+        lowQty.push(q);
+    }
+});
+
+// 📊 BAR
+new Chart(document.getElementById("barChart"), {
+    type: "bar",
+    data: {
+        labels: names,
+        datasets: [{ label: "Stock", data: qty, borderRadius: 10 }]
+    }
+});
+
+// 🥧 PIE
+new Chart(document.getElementById("pieChart"), {
+    type: "pie",
+    data: {
+        labels: names,
+        datasets: [{ data: qty }]
+    }
+});
+
+// 📈 LINE
+new Chart(document.getElementById("lineChart"), {
+    type: "line",
+    data: {
+        labels: names,
+        datasets: [{
+            label: "Trend",
+            data: qty,
+            tension: 0.4
+        }]
+    }
+});
+
+// 📉 LOW STOCK
+new Chart(document.getElementById("lowStockChart"), {
+    type: "bar",
+    data: {
+        labels: lowNames,
+        datasets: [{ label: "Low Stock", data: lowQty }]
+    }
+});
+
+// 📅 EXPIRY CHART
+new Chart(document.getElementById("expiryChart"), {
+    type: "bar",
+    data: {
+        labels: exp_labels,
+        datasets: [{
+            label: "Days Left",
+            data: exp_days,
+            borderRadius: 10
+        }]
+    }
+});
+
+</script>
+
+{% endblock %}
