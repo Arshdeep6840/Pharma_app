@@ -5,12 +5,28 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, Tabl
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
+from functools import wraps
+from flask import abort
 app = Flask(__name__)
 app.secret_key = "secret123"
 
 # ---------------- DB ----------------
 def connect_db():
     return sqlite3.connect("database.db")
+
+def role_required(*roles):
+    def wrapper(f):
+        @wraps(f)
+        def decorated(*args, **kwargs):
+            if "user" not in session:
+                return redirect("/")
+            
+            if session.get("role") not in roles:
+                return abort(403)
+
+            return f(*args, **kwargs)
+        return decorated
+    return wrapper
 def create_table():
     conn = connect_db()
     cur = conn.cursor()
@@ -72,11 +88,11 @@ def login():
         data = cur.fetchone()
 
         if data:
-            session["user"]=user
+            session["user"] = data[1]
+            session["role"] = data[3]   # ✅ store role
             return redirect("/dashboard")
 
     return render_template("login.html")
-
 
 import pandas as pd
 from sklearn.linear_model import LinearRegression
@@ -99,6 +115,7 @@ def predict_demand():
 # ---------------- DASHBOARD ----------------
 from datetime import datetime, timedelta
 @app.route("/dashboard")
+@role_required("admin")
 def dashboard():
     if not is_logged_in():
         return redirect("/")
@@ -159,7 +176,8 @@ def dashboard():
                            top_qty=top_qty,
                            prediction = predict_demand())
 # ---------------- ADD ----------------
-@app.route("/add", methods=["GET", "POST"])
+@app.route("/add", methods=["GET","POST"])
+@role_required("admin", "pharmacist")
 def add():
     if not is_logged_in():
         return redirect("/")
@@ -182,6 +200,7 @@ def add():
 
 # ---------------- VIEW + SEARCH ----------------
 @app.route("/view")
+@role_required("admin", "pharmacist", "staff")
 def view():
     if not is_logged_in():
         return redirect("/")
@@ -201,7 +220,8 @@ def view():
     return render_template("view.html", data=data, search=search)
 
 # ---------------- UPDATE ----------------
-@app.route("/edit/<int:id>", methods=["GET", "POST"])
+@app.route("/edit/<int:id>", methods=["GET","POST"])
+@role_required("admin", "pharmacist")
 def edit(id):
     if not is_logged_in():
         return redirect("/")
@@ -229,6 +249,7 @@ def edit(id):
 
 # ---------------- DELETE ----------------
 @app.route("/delete/<int:id>")
+@role_required("admin", "pharmacist")
 def delete(id):
     if not is_logged_in():
         return redirect("/")
@@ -257,6 +278,7 @@ def logout():
     session.clear()
     return redirect("/")
 @app.route("/sale", methods=["GET","POST"])
+@role_required("admin", "pharmacist", "staff")
 def sale():
     if not is_logged_in():
         return redirect("/")
@@ -311,6 +333,7 @@ def sale():
 
     return render_template("sale.html", meds=meds)
 @app.route("/sales-report")
+@role_required("admin", "pharmacist")
 def sales_report():
     if not is_logged_in():
         return redirect("/")
@@ -340,6 +363,7 @@ def sales_report():
     
 
 @app.route("/invoice/<int:id>")
+@role_required("admin", "pharmacist", "staff")
 def invoice(id):
     conn = connect_db()
     cur = conn.cursor()
@@ -401,6 +425,10 @@ def invoice(id):
     doc.build(elements)
 
     return send_file(file, as_attachment=True)
+
+@app.errorhandler(403)
+def forbidden(e):
+    return render_template("403.html"), 403
 # ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(debug=True)

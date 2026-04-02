@@ -79,14 +79,26 @@ body {
         <i class="bi bi-capsule"></i> Pharma Dashboard
     </h4>
 <nav class="mb-3">
+
+    {% if session['role'] == 'admin' or session['role'] == 'pharmacist' %}
     <a href="/dashboard" class="btn btn-primary">Dashboard</a>
-    <a href="/add" class="btn btn-success">Add</a>
+    {% endif %}
+
+    {% if session['role'] == 'admin' or session['role'] == 'pharmacist' %}
+        <a href="/add" class="btn btn-success">Add</a>
+    {% endif %}
+
+    {% if session['role'] == 'admin' %}
     <a href="/view" class="btn btn-info">View</a>
+    {% endif %}
 
-    <!-- NEW -->
-    <a href="/sale" class="btn btn-warning">Sell</a>
-    <a href="/sales-report" class="btn btn-dark">Sales</a>
+    {% if session['role'] in ['admin','pharmacist','staff'] %}
+        <a href="/sale" class="btn btn-warning">Sell</a>
+    {% endif %}
 
+    {% if session['role'] == 'admin' %}
+        <a href="/sales-report" class="btn btn-dark">Sales</a>
+    {% endif %}
     <a href="/logout" class="btn btn-danger">Logout</a>
 </nav>
 </div>
