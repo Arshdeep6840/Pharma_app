@@ -19,7 +19,7 @@ def role_required(*roles):
         @wraps(f)
         def decorated(*args, **kwargs):
             if "user" not in session:
-                return redirect("/")
+                return redirect("/login")
             
             if session.get("role") not in roles:
                 return abort(403)
@@ -74,9 +74,11 @@ create_table()
 # ---------------- AUTH ----------------
 def is_logged_in():
     return "user" in session
-
+@app.route("/")
+def home():
+    return render_template("home.html")
 # ---------------- LOGIN ----------------
-@app.route("/", methods=["GET","POST"])
+@app.route("/login", methods=["GET","POST"])
 def login():
     if request.method=="POST":
         user = request.form["username"]
@@ -115,10 +117,10 @@ def predict_demand():
 # ---------------- DASHBOARD ----------------
 from datetime import datetime, timedelta
 @app.route("/dashboard")
-@role_required("admin")
+# @role_required("admin")
 def dashboard():
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     conn = connect_db()
     cur = conn.cursor()
@@ -180,7 +182,7 @@ def dashboard():
 @role_required("admin", "pharmacist")
 def add():
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     if request.method == "POST":
         conn = connect_db()
@@ -203,7 +205,7 @@ def add():
 @role_required("admin", "pharmacist", "staff")
 def view():
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     search = request.args.get("search", "")
 
@@ -224,7 +226,7 @@ def view():
 @role_required("admin", "pharmacist")
 def edit(id):
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     conn = connect_db()
     cur = conn.cursor()
@@ -252,7 +254,7 @@ def edit(id):
 @role_required("admin", "pharmacist")
 def delete(id):
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     conn = connect_db()
     cur = conn.cursor()
@@ -276,12 +278,12 @@ def low_stock_api():
 @app.route("/logout")
 def logout():
     session.clear()
-    return redirect("/")
+    return redirect("/login")
 @app.route("/sale", methods=["GET","POST"])
 @role_required("admin", "pharmacist", "staff")
 def sale():
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     conn = connect_db()
     cur = conn.cursor()
@@ -336,7 +338,7 @@ def sale():
 @role_required("admin", "pharmacist")
 def sales_report():
     if not is_logged_in():
-        return redirect("/")
+        return redirect("/login")
 
     conn = connect_db()
     cur = conn.cursor()

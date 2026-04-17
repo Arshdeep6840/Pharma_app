@@ -80,9 +80,9 @@ body {
     </h4>
 <nav class="mb-3">
 
-    {% if session['role'] == 'admin' or session['role'] == 'pharmacist' %}
+    
     <a href="/dashboard" class="btn btn-primary">Dashboard</a>
-    {% endif %}
+    
 
     {% if session['role'] == 'admin' or session['role'] == 'pharmacist' %}
         <a href="/add" class="btn btn-success">Add</a>
